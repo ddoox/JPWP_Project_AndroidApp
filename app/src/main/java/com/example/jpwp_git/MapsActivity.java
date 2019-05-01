@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -32,8 +33,37 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+
+    private class Miejsce{
+
+        private String _NazwaWydarzenia;
+        private LatLng _LokalizacjaLatLng;
+        private int _MarkerID;
+
+        public Miejsce(int MarkerID, String NazwaWydarzenia, LatLng LokalizacjaLatLng)
+        {
+            _NazwaWydarzenia = NazwaWydarzenia;
+            _LokalizacjaLatLng = LokalizacjaLatLng;
+            _MarkerID = MarkerID;
+        }
+
+        public String getNazwa()
+        {
+            return _NazwaWydarzenia;
+        }
+        public LatLng getLatLng(){
+            return _LokalizacjaLatLng;
+        }
+        public void StworzMarker()
+        {
+            Marker _MarkerID =  mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
+        }
+
+    }
+
+
     //do map
-    private GoogleMap mMap;
+    public GoogleMap mMap;
     Location PozycjaLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
@@ -41,6 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker AktualnaPozycjaMarker;
     LatLng AktualnaPozycjaWspolrzedneLatLang;
     CameraPosition PozycjaKamery;
+    boolean PierwszeUstaleniePozycji = true;
 
     //layout
     TextView PoleTekstowe1;
@@ -61,8 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
@@ -97,52 +127,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 
-        //LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-        //        .addLocationRequest(locationRequest);
-
-
-        //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
+         //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
+                if (locationResult == null)
+                {
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
+                for (Location location : locationResult.getLocations())
+                {
                     //zmiany po ustaleniu lokacji
                     PozycjaLocation = location;
                     PoleTekstowe1.setText("Latitude  =" + PozycjaLocation.getLatitude());
                     PoleTekstowe2.setText("Longitude  =" + PozycjaLocation.getLongitude());
-                    //AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
-                    //AktualnaPozycjaMarker = mMap.addMarker(new MarkerOptions().position(AktualnaPozycjaWspolrzedneLatLang).title("Marker in Sydney"));
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(AktualnaPozycjaWspolrzedneLatLang));
-                    LatLng sydney = new LatLng(PozycjaLocation.getLatitude(), PozycjaLocation.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(sydney).title("kek"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
+                    //zmiana pozycji głównego markera
+                    AktualnaPozycjaWspolrzedneLatLang = new LatLng(PozycjaLocation.getLatitude(),PozycjaLocation.getLongitude());
+                    AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
+
+                    if(PierwszeUstaleniePozycji)
+                    {
+                        AktualnaPozycjaMarker.setVisible(true);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(AktualnaPozycjaWspolrzedneLatLang, 10.0f));
+                        PierwszeUstaleniePozycji = false;
+                    }
                 }
             }
-
-
         };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -156,10 +168,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+
+    // wywoływane po tym jak mapa jest gotowa do użytku
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        //marker na aktualną pozycję, niebieski, początkowo ukryty, bo ma domyślną lokalizację, po ustaleniu się pojawi
+        AktualnaPozycjaMarker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).position(new LatLng(50,20)).title("Tu jesteś"));
+        AktualnaPozycjaMarker.setVisible(false);
+
+
+        //markery na wydarzenia
+        Miejsce Tauron = new Miejsce(1,"Tauron",new LatLng(50.067790, 19.991360));
+        Tauron.StworzMarker();
+
+    }
+
+
     private void startLocationUpdates() {
         fusedLocationClient.requestLocationUpdates(locationRequest,
                 locationCallback,
                 null /* Looper */);
+    }
+
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
 
@@ -193,17 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     } ;
 
 
-    // wywoływane po tym jak mapa jest gotowa do użytku
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-       // AktualnaPozycjaWspolrzedneLatLang = new LatLng(-34, 10);
-       // AktualnaPozycjaMarker = mMap.addMarker(new MarkerOptions().position(AktualnaPozycjaWspolrzedneLatLang).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(AktualnaPozycjaWspolrzedneLatLang));
-
-    }
 
 
 }
