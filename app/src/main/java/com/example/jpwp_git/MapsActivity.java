@@ -10,17 +10,16 @@ import android.os.Bundle;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -38,13 +37,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         private String _NazwaWydarzenia;
         private LatLng _LokalizacjaLatLng;
-        private int _MarkerID;
+        private Marker _Marker;
 
-        public Miejsce(int MarkerID, String NazwaWydarzenia, LatLng LokalizacjaLatLng)
+        public Miejsce(String NazwaWydarzenia, LatLng LokalizacjaLatLng)
         {
             _NazwaWydarzenia = NazwaWydarzenia;
             _LokalizacjaLatLng = LokalizacjaLatLng;
-            _MarkerID = MarkerID;
+            this.stworzMarker();
         }
 
         public String getNazwa()
@@ -54,9 +53,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public LatLng getLatLng(){
             return _LokalizacjaLatLng;
         }
-        public void StworzMarker()
+        public void stworzMarker()
         {
-            Marker _MarkerID =  mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
+            _Marker =  mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
+        }
+        public void usunMarker()
+        {
+            _Marker.remove();
         }
 
     }
@@ -70,7 +73,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationCallback locationCallback;
     Marker AktualnaPozycjaMarker;
     LatLng AktualnaPozycjaWspolrzedneLatLang;
-    CameraPosition PozycjaKamery;
     boolean PierwszeUstaleniePozycji = true;
 
     //layout
@@ -85,6 +87,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        //sprawdzenie czy są przyznane uprawnienia do lokalizacji, jeśli nie to o nie prosi
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }
 
 
         //ustawia jako ekran activity_maps.xml
@@ -115,8 +124,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 PoleTekstowe3.setText("test");
                 refresh();
             }
-
-
         });
 
 
@@ -127,7 +134,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 
-         //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
+
+        //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -142,10 +150,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PoleTekstowe1.setText("Latitude  =" + PozycjaLocation.getLatitude());
                     PoleTekstowe2.setText("Longitude  =" + PozycjaLocation.getLongitude());
 
+
                     //zmiana pozycji głównego markera
                     AktualnaPozycjaWspolrzedneLatLang = new LatLng(PozycjaLocation.getLatitude(),PozycjaLocation.getLongitude());
                     AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
 
+
+                    //po pierwszym ustaleniu lokalizacji pokazanie markera, najazd kamery
                     if(PierwszeUstaleniePozycji)
                     {
                         AktualnaPozycjaMarker.setVisible(true);
@@ -155,8 +166,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
-    }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
 
 
     @Override
@@ -180,14 +206,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //marker na aktualną pozycję, niebieski, początkowo ukryty, bo ma domyślną lokalizację, po ustaleniu się pojawi
-        AktualnaPozycjaMarker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).position(new LatLng(50,20)).title("Tu jesteś"));
+
+        //marker na aktualną pozycję, niebieski, początkowo ukryty, bo ma domyślną lokalizację
+        AktualnaPozycjaMarker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).position(new LatLng(50, 20)).title("Tu jesteś"));
         AktualnaPozycjaMarker.setVisible(false);
 
 
         //markery na wydarzenia
-        Miejsce Tauron = new Miejsce(1,"Tauron",new LatLng(50.067790, 19.991360));
-        Tauron.StworzMarker();
+        Miejsce Tauron = new Miejsce("Tauron",new LatLng(50.067790, 19.991360));
+
 
     }
 
@@ -204,7 +231,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    // do obsługi klawisza
+    // do obsługi klawisza, aktualnie bezużyteczne, jedyne zastosowanie to chodzenie po mieszkaniu i nawalanie w przycisk - wtedy rysuje węża
     private void refresh() {
 
         //trzeba sprawdzić czy jest uprawnienie do lokalizacji
