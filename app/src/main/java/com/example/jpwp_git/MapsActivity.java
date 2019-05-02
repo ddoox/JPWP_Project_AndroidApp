@@ -20,6 +20,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,10 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
-    public class Miejsce{
+    public class Miejsce {
 
         private String _NazwaWydarzenia;
         private LatLng _LokalizacjaLatLng;
@@ -45,8 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         private float _Odleglosc;
 
         //konstruktor automatycznie dodaje marker
-        public Miejsce(String NazwaWydarzenia, LatLng LokalizacjaLatLng)
-        {
+        public Miejsce(String NazwaWydarzenia, LatLng LokalizacjaLatLng) {
             _NazwaWydarzenia = NazwaWydarzenia;
             _LokalizacjaLatLng = LokalizacjaLatLng;
             _Location = new Location(_NazwaWydarzenia);
@@ -54,48 +57,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             _Location.setLatitude(_LokalizacjaLatLng.latitude);
             this.stworzMarker();
         }
-/*
-        public String getNazwa()
-        {
-            return _NazwaWydarzenia;
+
+        /*
+                public String getNazwa()
+                {
+                    return _NazwaWydarzenia;
+                }
+
+                public LatLng getLatLng()
+                {
+                    return _LokalizacjaLatLng;
+                }
+
+                public Location getLocation()
+                {
+                    return _Location;
+                }
+        */
+        public void stworzMarker() {
+            _Marker = mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
         }
 
-        public LatLng getLatLng()
-        {
-            return _LokalizacjaLatLng;
-        }
+        /*
+                public Marker getMarker()
+                {
+                    return _Marker;
+                }
 
-        public Location getLocation()
-        {
-            return _Location;
-        }
-*/
-        public void stworzMarker()
-        {
-            _Marker =  mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
-        }
-/*
-        public Marker getMarker()
-        {
-            return _Marker;
-        }
-
-        public void usunMarker()
-        {
-            _Marker.remove();
-        }
-*/
-        public float getOdleglosc()
-        {
+                public void usunMarker()
+                {
+                    _Marker.remove();
+                }
+        */
+        public float getOdleglosc() {
             this.obliczOdleglosc();
             return _Odleglosc;
         }
 
-        public void obliczOdleglosc()
-        {
+        public void obliczOdleglosc() {
             //używać tylko po ustaleniu lokalizacji
             if (AktualnaPozycjaLocation != null)
-                 _Odleglosc = (AktualnaPozycjaLocation.distanceTo(_Location))/1000;
+                _Odleglosc = (AktualnaPozycjaLocation.distanceTo(_Location)) / 1000;
             else
                 _Odleglosc = -1;
         }
@@ -122,22 +124,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button Guzik;
 
 
-
-
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         //sprawdzenie czy są przyznane uprawnienia do lokalizacji, jeśli nie to o nie prosi
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
         //ustawia jako ekran activity_maps.xml
         setContentView(R.layout.activity_maps);
+
+        //zamiana domyślnego ActionBar na customowy ze swoim menu
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -153,11 +154,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Guzik = findViewById(R.id.button);
 
         //po naciśnięciu guzika odświeża pola tekstowe
-        Guzik.setOnClickListener(new View.OnClickListener()
-        {
+        Guzik.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 PoleTekstowe3.setText("test");
                 refresh();
             }
@@ -170,16 +169,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
-        locationCallback = new LocationCallback()
-        {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null)
-                {
+                if (locationResult == null) {
                     return;
                 }
-                for (Location location : locationResult.getLocations())
-                {
+                for (Location location : locationResult.getLocations()) {
                     //zmiany po aktualizacji lokacji
                     AktualnaPozycjaLocation = location;
                     PoleTekstowe1.setText("Latitude  =" + AktualnaPozycjaLocation.getLatitude());
@@ -190,15 +186,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
 
                     //uaktualnianie odleglosci do markerow
-                    for(int i = 0; i < ListaWydarzen.size(); i++)
-                    {
+                    for (int i = 0; i < ListaWydarzen.size(); i++) {
                         ListaWydarzen.get(i).obliczOdleglosc();
-                        PoleTekstowe3.setText(Float.toString(ListaWydarzen.get(ListaWydarzen.size()-1).getOdleglosc()));
+                        PoleTekstowe3.setText(Float.toString(ListaWydarzen.get(ListaWydarzen.size() - 1).getOdleglosc()));
                     }
 
                     //po pierwszym ustaleniu lokalizacji pokazanie markera, najazd kamery
-                    if (PierwszeUstaleniePozycji)
-                    {
+                    if (PierwszeUstaleniePozycji) {
                         AktualnaPozycjaMarker.setVisible(true);
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(AktualnaPozycjaWspolrzedneLatLang, 10.0f));
                         PierwszeUstaleniePozycji = false;
@@ -208,13 +202,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
 
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
     }
 
 
+    //obsługa klawiszy menu
     @Override
-    protected void onResume()
+    public boolean onOptionsItemSelected(MenuItem item)
     {
+        // Handle item selection
+        switch (item.getItemId())
+        {
+
+            case R.id.MenuOpcjaLista:
+            {
+                PoleTekstowe3.setText("kek MENU");
+                return true;
+            }
+
+            case R.id.MenuOpcjaMapa:
+            {
+                PoleTekstowe3.setText("kek MAPA");
+                return true;
+            }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+    @Override
+    protected void onResume() {
         super.onResume();
         startLocationUpdates();
 
@@ -222,8 +249,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
 
         stopLocationUpdates();
@@ -232,8 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // wywoływane po tym jak mapa jest gotowa do użytku
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
         //marker na aktualną pozycję, niebieski, początkowo ukryty, bo ma domyślną lokalizację
@@ -241,7 +266,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AktualnaPozycjaMarker.setVisible(false);
 
         //markery na wydarzenia
-        ListaWydarzen.add( new Miejsce("Wydarzenie1", new LatLng(50.067790, 19.991362)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie1", new LatLng(50.067790, 19.991362)));
         ListaWydarzen.add(new Miejsce("Wydarzenie2", new LatLng(50.077337, 19.981565)));
         ListaWydarzen.add(new Miejsce("Wydarzenie3", new LatLng(50.087220, 19.891578)));
         ListaWydarzen.add(new Miejsce("Wydarzenie4", new LatLng(50.097985, 19.971365)));
@@ -253,9 +278,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void startLocationUpdates()
-    {
-        fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null /* Looper */);
+    private void startLocationUpdates() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */);
     }
 
 
