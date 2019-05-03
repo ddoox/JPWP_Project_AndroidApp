@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.jpwp_git">
+    package="com.JPWP">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".DisplayMessageActivity"
+        <activity android:name="com.JPWP.ListaWydarzen"
             android:label="@string/title_activity_display_message"
             android:screenOrientation="portrait"></activity>
         <!--
@@ -32,7 +32,7 @@ android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="com.JPWP.MainMapa"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -1,4 +1,4 @@
-package com.example.jpwp_git;
+package com.JPWP;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.JPWP.R;
 
-public class DisplayMessageActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class ListaWydarzen extends AppCompatActivity {
 
     public class DaneWydarzenia {
 

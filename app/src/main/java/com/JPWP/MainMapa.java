@@ -1,14 +1,13 @@
-package com.example.jpwp_git;
+package com.JPWP;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.JPWP.R;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -26,24 +25,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
 
 
     public class Miejsce{
@@ -226,7 +217,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //przesłanie list do nowego activity
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        Intent intent = new Intent(this, com.JPWP.ListaWydarzen.class);
         intent.putStringArrayListExtra("nazwa", (ArrayList<String>) NazwaSwap);
         intent.putStringArrayListExtra("odleglosc", (ArrayList<String>) OdlegloscSwap);
         startActivity(intent);
