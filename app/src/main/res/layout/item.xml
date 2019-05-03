@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#d3d3d3"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+
+    <TextView
+        android:id="@+id/nazwa_wydarzenia"
+        android:layout_width="match_parent"
+        android:textColor="#4d4d4d"
+        android:layout_weight="18"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:gravity="center"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:id="@+id/odleglosc"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="82"
+        android:gravity="left"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+</LinearLayout>

@@ -113,9 +113,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean PierwszeUstaleniePozycji = true;
     List<Miejsce> ListaWydarzen = new ArrayList<>();
 
-    //layout
-    TextView PoleTekstowe3;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +137,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Tworzenie instancji Fused Location Provider Client, wykorzystywana do lokalizacji
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // przypisanie elementów layoutu do zmiennych
-        PoleTekstowe3 = findViewById(R.id.textView3);
 
         //utworzenie location request potrzebnego do uzyskania aktualnej lokacji, ustawia się parametry odświeżania lokalizacji i dokładność
         locationRequest = LocationRequest.create();
@@ -267,15 +261,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         AktualnaPozycjaMarker.setVisible(false);
 
         //markery na wydarzenia
-        ListaWydarzen.add(new Miejsce("Wydarzenie1", new LatLng(50.067790, 19.991362)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie111111111111111112222222222222222222222222222333333333333333333333333333333333333333", new LatLng(50.067790, 19.991362)));
         ListaWydarzen.add(new Miejsce("Wydarzenie2", new LatLng(50.077337, 19.981565)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie3", new LatLng(50.087220, 19.891578)));
+        ListaWydarzen.add(new Miejsce("Wydarsdgsdgsdgie3", new LatLng(50.087220, 19.891578)));
         ListaWydarzen.add(new Miejsce("Wydarzenie4", new LatLng(50.097985, 19.971365)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie5", new LatLng(50.017802, 19.961765)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie6", new LatLng(50.027795, 19.591987)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie7", new LatLng(49.178628, 19.941363)));
+        ListaWydarzen.add(new Miejsce("Wydretbzenie5", new LatLng(50.017802, 19.961765)));
+        ListaWydarzen.add(new Miejsce("Wydfsdfssdffsdnie6", new LatLng(50.027795, 19.591987)));
+        ListaWydarzen.add(new Miejsce("Wydareeeeeeeeeeeeeeeeeeeeeeeezenie7", new LatLng(49.178628, 19.941363)));
         ListaWydarzen.add(new Miejsce("Wydarzenie8", new LatLng(50.267790, 19.291365)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie9", new LatLng(32.267790, 32.291365)));
+        ListaWydarzen.add(new Miejsce("Wydasddddddddddddddddddie9", new LatLng(32.267790, 32.291365)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie10", new LatLng(51.267790, 20.291365)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie11", new LatLng(52.267790, 21.291365)));
+        ListaWydarzen.add(new Miejsce("Wysgsdgsdgsdgdgsdgsdge12", new LatLng(53.267790, 18.291365)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie13", new LatLng(54.267790, 17.291365)));
     }
 
 
