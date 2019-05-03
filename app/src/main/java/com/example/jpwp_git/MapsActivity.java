@@ -1,8 +1,10 @@
 package com.example.jpwp_git;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -33,14 +36,17 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
-    public class Miejsce {
+    public class Miejsce{
 
         private String _NazwaWydarzenia;
         private LatLng _LokalizacjaLatLng;
@@ -49,7 +55,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         private float _Odleglosc;
 
         //konstruktor automatycznie dodaje marker
-        public Miejsce(String NazwaWydarzenia, LatLng LokalizacjaLatLng) {
+        public Miejsce(String NazwaWydarzenia, LatLng LokalizacjaLatLng)
+        {
             _NazwaWydarzenia = NazwaWydarzenia;
             _LokalizacjaLatLng = LokalizacjaLatLng;
             _Location = new Location(_NazwaWydarzenia);
@@ -58,43 +65,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.stworzMarker();
         }
 
-        /*
-                public String getNazwa()
-                {
-                    return _NazwaWydarzenia;
-                }
+        public String getNazwa()
+        {
+            return _NazwaWydarzenia;
+        }
 
-                public LatLng getLatLng()
-                {
-                    return _LokalizacjaLatLng;
-                }
+        public LatLng getLatLng()
+        {
+            return _LokalizacjaLatLng;
+        }
 
-                public Location getLocation()
-                {
-                    return _Location;
-                }
-        */
+        public Location getLocation()
+        {
+            return _Location;
+        }
+
         public void stworzMarker() {
             _Marker = mMap.addMarker(new MarkerOptions().position(_LokalizacjaLatLng).title(_NazwaWydarzenia));
         }
 
-        /*
-                public Marker getMarker()
-                {
-                    return _Marker;
-                }
-
-                public void usunMarker()
-                {
-                    _Marker.remove();
-                }
-        */
         public float getOdleglosc() {
             this.obliczOdleglosc();
             return _Odleglosc;
         }
 
-        public void obliczOdleglosc() {
+        public void obliczOdleglosc()
+        {
             //używać tylko po ustaleniu lokalizacji
             if (AktualnaPozycjaLocation != null)
                 _Odleglosc = (AktualnaPozycjaLocation.distanceTo(_Location)) / 1000;
@@ -118,10 +114,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     List<Miejsce> ListaWydarzen = new ArrayList<>();
 
     //layout
-    TextView PoleTekstowe1;
-    TextView PoleTekstowe2;
     TextView PoleTekstowe3;
-    Button Guzik;
 
 
     @Override
@@ -129,7 +122,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
 
         //sprawdzenie czy są przyznane uprawnienia do lokalizacji, jeśli nie to o nie prosi
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
@@ -148,19 +142,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // przypisanie elementów layoutu do zmiennych
-        PoleTekstowe1 = findViewById(R.id.textView);
-        PoleTekstowe2 = findViewById(R.id.textView2);
         PoleTekstowe3 = findViewById(R.id.textView3);
-        Guzik = findViewById(R.id.button);
-
-        //po naciśnięciu guzika odświeża pola tekstowe
-        Guzik.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PoleTekstowe3.setText("test");
-                refresh();
-            }
-        });
 
         //utworzenie location request potrzebnego do uzyskania aktualnej lokacji, ustawia się parametry odświeżania lokalizacji i dokładność
         locationRequest = LocationRequest.create();
@@ -172,23 +154,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
+                if (locationResult == null)
+                {
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
+                for (Location location : locationResult.getLocations())
+                {
                     //zmiany po aktualizacji lokacji
                     AktualnaPozycjaLocation = location;
-                    PoleTekstowe1.setText("Latitude  =" + AktualnaPozycjaLocation.getLatitude());
-                    PoleTekstowe2.setText("Longitude  =" + AktualnaPozycjaLocation.getLongitude());
 
                     //zmiana pozycji głównego markera
                     AktualnaPozycjaWspolrzedneLatLang = new LatLng(AktualnaPozycjaLocation.getLatitude(), AktualnaPozycjaLocation.getLongitude());
                     AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
 
                     //uaktualnianie odleglosci do markerow
-                    for (int i = 0; i < ListaWydarzen.size(); i++) {
+                    for (int i = 0; i < ListaWydarzen.size(); i++)
+                    {
                         ListaWydarzen.get(i).obliczOdleglosc();
-                        PoleTekstowe3.setText(Float.toString(ListaWydarzen.get(ListaWydarzen.size() - 1).getOdleglosc()));
                     }
 
                     //po pierwszym ustaleniu lokalizacji pokazanie markera, najazd kamery
@@ -204,38 +186,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        //dodawanie swojego menu zamiast domyslnego
         getMenuInflater().inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu);
         return true;
     }
 
 
-    //obsługa klawiszy menu
+    //obsługa opcji menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle item selection
         switch (item.getItemId())
         {
 
             case R.id.MenuOpcjaLista:
             {
-                PoleTekstowe3.setText("kek MENU");
+                opcjaLista();
                 return true;
             }
 
             case R.id.MenuOpcjaMapa:
             {
-                PoleTekstowe3.setText("kek MAPA");
                 return true;
             }
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void opcjaLista()
+    {
+        List<String> NazwaSwap,OdlegloscSwap;
+        NazwaSwap = new ArrayList<>();
+        OdlegloscSwap = new ArrayList<>();
+
+        for(int i = 0; i < ListaWydarzen.size(); i++)
+        {
+            NazwaSwap.add(ListaWydarzen.get(i).getNazwa());
+            OdlegloscSwap.add(Float.toString(ListaWydarzen.get(i).getOdleglosc()));
+        }
+
+        //przesłanie list do nowego activity
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        intent.putStringArrayListExtra("nazwa", (ArrayList<String>) NazwaSwap);
+        intent.putStringArrayListExtra("odleglosc", (ArrayList<String>) OdlegloscSwap);
+        startActivity(intent);
+
     }
 
 
@@ -292,39 +293,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
-
-
-    // do obsługi klawisza, aktualnie bezużyteczne, jedyne zastosowanie to chodzenie po mieszkaniu i nawalanie w przycisk - wtedy rysuje węża
-    private void refresh() {
-
-        //trzeba sprawdzić czy jest uprawnienie do lokalizacji
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            return;
-        }
-
-
-        //uzyskanie ostatniej lokalizacji za pomocą API Googla
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-
-                            AktualnaPozycjaLocation = location;
-                            PoleTekstowe1.setText("Latitude  =" + AktualnaPozycjaLocation.getLatitude());
-                            PoleTekstowe2.setText("Longitude  =" + AktualnaPozycjaLocation.getLongitude());
-                            LatLng sydney = new LatLng(AktualnaPozycjaLocation.getLatitude(), AktualnaPozycjaLocation.getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(sydney).title("kek"));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        }
-                    }
-                });
-    }
-
-
 
 
 

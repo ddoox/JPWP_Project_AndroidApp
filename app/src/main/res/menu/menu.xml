@@ -6,11 +6,11 @@
     >
 
     <item android:id="@+id/MenuOpcjaMapa"
-        android:title="@string/MapaString"
+        android:title="@string/MenuMapa"
         app:showAsAction="never"/>
 
     <item android:id="@+id/MenuOpcjaLista"
-        android:title="@string/ListaString"
+        android:title="@string/MenuLista"
         app:showAsAction="never"/>
 
 </menu>

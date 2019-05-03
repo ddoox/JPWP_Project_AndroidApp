@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">JPWP_git</string>
     <string name="title_activity_maps">JPWP</string>
-    <string name="MapaString">Mapa</string>
-    <string name="ListaString">Lista wydarzeń</string>
+    <string name="title_activity_display_message">Lista Wydarzeń</string>
+    <string name="MenuMapa">Mapa</string>
+    <string name="MenuLista">Lista wydarzeń</string>
 </resources>
