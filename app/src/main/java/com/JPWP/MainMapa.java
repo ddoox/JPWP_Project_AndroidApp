@@ -7,7 +7,6 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 
-import com.JPWP.R;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -31,6 +30,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -135,36 +136,41 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        //klasa wykorzystywana do do otrzymywania aktualizacji przy zmianie położenia
-        locationCallback = new LocationCallback() {
+        //wykorzystywane do do otrzymywania aktualizacji przy zmianie położenia
+        locationCallback = new LocationCallback()
+        {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
+            public void onLocationResult(LocationResult locationResult)
+            {
                 if (locationResult == null)
                 {
                     return;
-                }
-                for (Location location : locationResult.getLocations())
-                {
-                    //zmiany po aktualizacji lokacji
-                    AktualnaPozycjaLocation = location;
-
-                    //zmiana pozycji głównego markera
-                    AktualnaPozycjaWspolrzedneLatLang = new LatLng(AktualnaPozycjaLocation.getLatitude(), AktualnaPozycjaLocation.getLongitude());
-                    AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
-
-                    //uaktualnianie odleglosci do markerow
-                    for (int i = 0; i < ListaWydarzen.size(); i++)
+                } else
                     {
-                        ListaWydarzen.get(i).obliczOdleglosc();
-                    }
+                        for (Location location : locationResult.getLocations())
+                        {
+                            //zmiany po aktualizacji lokacji
+                            AktualnaPozycjaLocation = location;
 
-                    //po pierwszym ustaleniu lokalizacji pokazanie markera, najazd kamery
-                    if (PierwszeUstaleniePozycji) {
-                        AktualnaPozycjaMarker.setVisible(true);
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(AktualnaPozycjaWspolrzedneLatLang, 10.0f));
-                        PierwszeUstaleniePozycji = false;
+                            //zmiana pozycji głównego markera
+                            AktualnaPozycjaWspolrzedneLatLang = new LatLng(AktualnaPozycjaLocation.getLatitude(), AktualnaPozycjaLocation.getLongitude());
+                            AktualnaPozycjaMarker.setPosition(AktualnaPozycjaWspolrzedneLatLang);
+
+                            //uaktualnianie odleglosci do markerow
+                            for (int i = 0; i < ListaWydarzen.size(); i++)
+                            {
+                                ListaWydarzen.get(i).obliczOdleglosc();
+                            }
+
+                            //po pierwszym ustaleniu lokalizacji pokazanie markera, najazd kamery
+                            if (PierwszeUstaleniePozycji)
+                            {
+                                AktualnaPozycjaMarker.setVisible(true);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(AktualnaPozycjaWspolrzedneLatLang, 10.0f));
+                                PierwszeUstaleniePozycji = false;
+                            }
+                        }
                     }
-                }
             }
         };
 
@@ -173,7 +179,8 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         //dodawanie swojego menu zamiast domyslnego
         getMenuInflater().inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu);
@@ -187,7 +194,6 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
     {
         switch (item.getItemId())
         {
-
             case R.id.MenuOpcjaLista:
             {
                 opcjaLista();
@@ -204,8 +210,21 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
+
+
+
     public void opcjaLista()
     {
+        //sortowanie po odległości
+        Collections.sort(ListaWydarzen,new Comparator<Miejsce>()
+        {
+            @Override
+            public int compare(Miejsce s1, Miejsce s2)
+            {
+                return Float.valueOf(s1.getOdleglosc()).compareTo(s2.getOdleglosc());
+            }
+        });
+
         List<String> NazwaSwap,OdlegloscSwap;
         NazwaSwap = new ArrayList<>();
         OdlegloscSwap = new ArrayList<>();
@@ -221,30 +240,30 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         intent.putStringArrayListExtra("nazwa", (ArrayList<String>) NazwaSwap);
         intent.putStringArrayListExtra("odleglosc", (ArrayList<String>) OdlegloscSwap);
         startActivity(intent);
-
     }
 
 
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
         startLocationUpdates();
-
     }
 
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
-
         stopLocationUpdates();
     }
 
 
     // wywoływane po tym jak mapa jest gotowa do użytku
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
         mMap = googleMap;
 
         //marker na aktualną pozycję, niebieski, początkowo ukryty, bo ma domyślną lokalizację
@@ -260,17 +279,20 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         ListaWydarzen.add(new Miejsce("Wydfsdfssdffsdnie6", new LatLng(50.027795, 19.591987)));
         ListaWydarzen.add(new Miejsce("Wydareeeeeeeeeeeeeeeeeeeeeeeezenie7", new LatLng(49.178628, 19.941363)));
         ListaWydarzen.add(new Miejsce("Wydarzenie8", new LatLng(50.267790, 19.291365)));
-        ListaWydarzen.add(new Miejsce("Wydasddddddddddddddddddie9", new LatLng(32.267790, 32.291365)));
+        ListaWydarzen.add(new Miejsce("Wydasddddddddddddddddddie999999999999999999999999999999911999999999999999922999999993399999" +
+                "999449999999999999995599999999999999669990", new LatLng(32.267790, 32.291365)));
         ListaWydarzen.add(new Miejsce("Wydarzenie10", new LatLng(51.267790, 20.291365)));
         ListaWydarzen.add(new Miejsce("Wydarzenie11", new LatLng(52.267790, 21.291365)));
         ListaWydarzen.add(new Miejsce("Wysgsdgsdgsdgdgsdgsdge12", new LatLng(53.267790, 18.291365)));
-        ListaWydarzen.add(new Miejsce("Wydarzenie13", new LatLng(54.267790, 17.291365)));
+        ListaWydarzen.add(new Miejsce("żółć gęślą jaźń", new LatLng(54.267790, 17.291365)));
     }
 
 
-    private void startLocationUpdates() {
+    private void startLocationUpdates()
+    {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
@@ -282,7 +304,5 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
     {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
-
-
 
 }

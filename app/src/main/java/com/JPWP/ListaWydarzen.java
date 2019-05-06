@@ -13,8 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.JPWP.R;
-
 import java.util.ArrayList;
 
 public class ListaWydarzen extends AppCompatActivity {
@@ -44,13 +42,11 @@ public class ListaWydarzen extends AppCompatActivity {
         private Context mContext;
         int mResource;
 
-
-        public DaneWydarzeniaAdapter(Context context, int resource,  ArrayList<DaneWydarzenia> objects) {
+        public DaneWydarzeniaAdapter(Context context, int resource,  ArrayList<DaneWydarzenia> objects)
+        {
             super(context, resource, objects);
             mContext = context;
             mResource = resource;
-
-
         }
 
         @Override
@@ -66,9 +62,8 @@ public class ListaWydarzen extends AppCompatActivity {
             TextView TvNazwa = convertView.findViewById(R.id.nazwa_wydarzenia);
             TextView TvOdlegosc = convertView.findViewById(R.id.odleglosc);
 
-
             TvNazwa.setText(Nazwa);
-            TvOdlegosc.setText(Odleglosc + " km");
+            TvOdlegosc.setText(Odleglosc + " km ");
             return convertView;
         }
 
@@ -93,14 +88,9 @@ public class ListaWydarzen extends AppCompatActivity {
             ListaWydarzen.add(new DaneWydarzenia(NazwaLista.get(i),String.format("%.2f", Float.valueOf(OdlegloscLista.get(i)))));
         }
 
-
-
         DaneWydarzeniaAdapter adapter = new DaneWydarzeniaAdapter(this, R.layout.item, ListaWydarzen);
-
         ListView listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
-
-
 
     }
 
