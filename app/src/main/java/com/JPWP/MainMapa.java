@@ -271,7 +271,7 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         AktualnaPozycjaMarker.setVisible(false);
 
         //markery na wydarzenia
-        ListaWydarzen.add(new Miejsce("Wydarzenie111111111111111112222222222222222222222222222333333333333333333333333333333333333333", new LatLng(50.067790, 19.991362)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie flagowe", new LatLng(50.067790, 19.991362)));
         ListaWydarzen.add(new Miejsce("Wydarzenie2", new LatLng(50.077337, 19.981565)));
         ListaWydarzen.add(new Miejsce("Wydarsdgsdgsdgie3", new LatLng(50.087220, 19.891578)));
         ListaWydarzen.add(new Miejsce("Wydarzenie4", new LatLng(50.097985, 19.971365)));
@@ -279,8 +279,7 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         ListaWydarzen.add(new Miejsce("Wydfsdfssdffsdnie6", new LatLng(50.027795, 19.591987)));
         ListaWydarzen.add(new Miejsce("Wydareeeeeeeeeeeeeeeeeeeeeeeezenie7", new LatLng(49.178628, 19.941363)));
         ListaWydarzen.add(new Miejsce("Wydarzenie8", new LatLng(50.267790, 19.291365)));
-        ListaWydarzen.add(new Miejsce("Wydasddddddddddddddddddie999999999999999999999999999999911999999999999999922999999993399999" +
-                "999449999999999999995599999999999999669990", new LatLng(32.267790, 32.291365)));
+        ListaWydarzen.add(new Miejsce("Wydarzenie2", new LatLng(32.267790, 32.291365)));
         ListaWydarzen.add(new Miejsce("Wydarzenie10", new LatLng(51.267790, 20.291365)));
         ListaWydarzen.add(new Miejsce("Wydarzenie11", new LatLng(52.267790, 21.291365)));
         ListaWydarzen.add(new Miejsce("Wysgsdgsdgsdgdgsdgsdge12", new LatLng(53.267790, 18.291365)));
@@ -294,9 +293,10 @@ public class MainMapa extends AppCompatActivity implements OnMapReadyCallback {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
         }
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */);
+         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */);
     }
 
 

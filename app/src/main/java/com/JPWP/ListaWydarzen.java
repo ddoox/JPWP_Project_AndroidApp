@@ -1,6 +1,8 @@
 package com.JPWP;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,12 +12,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ListaWydarzen extends AppCompatActivity {
+
+
+    Random r = new Random();
+
+
 
     public class DaneWydarzenia {
 
@@ -47,6 +63,7 @@ public class ListaWydarzen extends AppCompatActivity {
             super(context, resource, objects);
             mContext = context;
             mResource = resource;
+
         }
 
         @Override
@@ -54,7 +71,6 @@ public class ListaWydarzen extends AppCompatActivity {
         {
             String Nazwa = getItem(position).getNazwa();
             String Odleglosc = getItem(position).getOdleglosc();
-
 
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent,false);
@@ -64,6 +80,7 @@ public class ListaWydarzen extends AppCompatActivity {
 
             TvNazwa.setText(Nazwa);
             TvOdlegosc.setText(Odleglosc + " km ");
+
             return convertView;
         }
 
@@ -78,10 +95,10 @@ public class ListaWydarzen extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        ArrayList<String> NazwaLista = getIntent().getStringArrayListExtra("nazwa");
+        final ArrayList<String> NazwaLista = getIntent().getStringArrayListExtra("nazwa");
         ArrayList<String> OdlegloscLista = getIntent().getStringArrayListExtra("odleglosc");
 
-        ArrayList<DaneWydarzenia> ListaWydarzen = new ArrayList<>();
+        final ArrayList<DaneWydarzenia> ListaWydarzen = new ArrayList<>();
 
         for(int i = 0; i < NazwaLista.size(); i ++)
         {
@@ -89,15 +106,46 @@ public class ListaWydarzen extends AppCompatActivity {
         }
 
         DaneWydarzeniaAdapter adapter = new DaneWydarzeniaAdapter(this, R.layout.item, ListaWydarzen);
-        ListView listView = findViewById(R.id.listView);
+        final ListView listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Toast.makeText(ListaWydarzen.this, "Wygenerowano QR na: " + NazwaLista.get(position), Toast.LENGTH_SHORT).show();
+
+                int rid = r.nextInt(800);
+                String text = "Zeskanowales mnie? W nagrode masz to: " + NazwaLista.get(position) + rid;
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                try {
+                    BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,200,200);
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+
+                    Intent intent = new Intent(ListaWydarzen.this, QR.class);
+                    intent.putExtra("obrazek", bitmap);
+                    startActivity(intent);
+                }
+                catch (WriterException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+
 
     }
 
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu);
         return true;
@@ -111,6 +159,7 @@ public class ListaWydarzen extends AppCompatActivity {
         {
             case R.id.MenuOpcjaLista:
             {
+
                 return true;
             }
 

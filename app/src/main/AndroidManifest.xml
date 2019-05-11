@@ -12,9 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name="com.JPWP.ListaWydarzen"
+        <activity android:name=".QR"
+            android:label="@string/QR"
+            >
+        </activity>
+        <activity
+            android:name=".ListaWydarzen"
             android:label="@string/title_activity_display_message"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <!--
 android:theme="@style/AppTheme"
 android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -32,7 +37,7 @@ android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.JPWP.MainMapa"
+            android:name=".MainMapa"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait">
             <intent-filter>
